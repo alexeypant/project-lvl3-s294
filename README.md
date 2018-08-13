@@ -1,4 +1,3 @@
-# this is the readme file
-just the test
+# project-lvl3-s294
 
-## some more text
+[![Build Status](https://travis-ci.org/alexeypant/project-lvl3-s294.svg?branch=master)](https://travis-ci.org/alexeypant/project-lvl3-s294)
