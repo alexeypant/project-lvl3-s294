@@ -1,3 +1,3 @@
 import 'bootstrap';
 
-console.log('hello from index.js');
+console.log('hello from my file.js');
