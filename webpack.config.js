@@ -19,6 +19,9 @@ module.exports = {
           },
           {
             loader: 'css-loader',
+            options: {
+              minimize: process.env.NODE_ENV === 'production',
+            },
           },
           {
             loader: 'postcss-loader',
@@ -36,7 +39,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'RSS Reader',
-      template: './src/template.html',
+      template: './template.html',
     }),
   ],
 };
