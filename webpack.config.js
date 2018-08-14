@@ -7,7 +7,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'dist'),
   },
   module: {
     rules: [
@@ -17,30 +17,30 @@ module.exports = {
         use: 'babel-loader',
       },
       {
-        test: /\.(scc|scss)$/, 
+        test: /\.(scc|scss)$/,
         use: [
-        {
-          loader: 'style-loader',
-        }, 
-        {
-          loader: 'css-loader',
-        }, 
-        {
-          loader: 'postcss-loader',
-          options: {
-            plugins: () => [precss, autoprefixer],
-          }  
-        }, 
-        {
-          loader: 'sass-loader' // compiles Sass to CSS
-        }]
-      }
-    ]
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: () => [precss, autoprefixer],
+            },
+          },
+          {
+            loader: 'sass-loader', // compiles Sass to CSS
+          }],
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
       title: 'RSS Reader',
-      template: "./src/template.html"
-    })
-  ]
+      template: './src/template.html',
+    }),
+  ],
 };
