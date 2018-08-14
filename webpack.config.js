@@ -1,14 +1,9 @@
-const path = require('path');
 const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const precss = require('precss');
 
 module.exports = {
-  entry: './src/index.js',
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-  },
+  mode: process.env.NODE_ENV || 'development',
   module: {
     rules: [
       {
