@@ -4,6 +4,7 @@ const precss = require('precss');
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
+  entry: './src/index.js',
   module: {
     rules: [
       {
