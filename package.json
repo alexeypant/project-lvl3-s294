@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "rss reader",
   "scripts": {
-    "dev": "webpack",
+    "dev": "webpack -d",
     "prod": "webpack -p",
     "eslint": "eslint",
     "test": "jest",

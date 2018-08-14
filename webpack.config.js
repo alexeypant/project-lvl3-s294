@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const precss = require('precss');
 
 module.exports = {
-  mode: process.env.NODE_ENV || 'development',
+  // mode: process.env.NODE_ENV || 'development',
   module: {
     rules: [
       {
@@ -36,7 +36,11 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'RSS Reader',
+      minify: {
+        collapseWhitespace: true,
+      },
       template: './template.html',
     }),
   ],
+  performance: { hints: false },
 };
