@@ -4,7 +4,6 @@ const precss = require('precss');
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
-  entry: './src/index.js',
   module: {
     rules: [
       {
@@ -20,9 +19,6 @@ module.exports = {
           },
           {
             loader: 'css-loader',
-            options: {
-              minimize: process.env.NODE_ENV === 'production',
-            },
           },
           {
             loader: 'postcss-loader',
