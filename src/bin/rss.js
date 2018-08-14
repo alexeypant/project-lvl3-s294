@@ -1,3 +1,4 @@
 #!/usr/bin/env node
 
-console.log('welcome to the RSS reader');
+console.log('Welcome to the RSS reader');
+
