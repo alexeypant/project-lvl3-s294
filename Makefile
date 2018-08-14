@@ -1,9 +1,8 @@
 install:  
-  npm install-deps
+	npm install-deps
 
 test:
-  npm test
+	npm test
 
 lint:
 	npm run eslint .
-  
