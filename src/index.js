@@ -1,15 +1,19 @@
 import 'bootstrap';
 import './app.scss';
 import $ from 'jquery';
+import axios from 'axios';
 import validator from 'validator';
 import PubSub from './PubSub';
+import getFeedData from './parsers';
 
 const state = {
   feeds: [],
+  responses: [],
+  docs: '',
 };
 
+const parser = new DOMParser();
 const events = new PubSub();
-
 const input = document.getElementById('feedUrlInput');
 const form = document.getElementById('feedUrlForm');
 
@@ -40,16 +44,46 @@ const feedToAdd = (feedUrl) => {
   }
 };
 
+const downloadFeedsData = () => {
+  const urls = state.feeds;
+  if (urls.length === 0) return;
+  const proxyURL = 'https://cors-anywhere.herokuapp.com/'
+
+  const downloadPromises = urls.map(url => axios.get(`${proxyURL}${url}`));
+  Promise.all(downloadPromises)
+    .then((responses) => {
+      state.responses = responses;
+      events.emit('feedsDataDownloaded');
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+    .then(() => {
+      // console.log('done');
+    });
+};
+
+const parseFeedsData = () => {
+  state.docs = state.responses.map(el => parser.parseFromString(el.data, 'application/xml'));
+  events.emit('feedsDataParsed');
+};
+
 const generateDescriptionList = () => {
   const $el = $('#feedsDescriptionList');
-  $el.html(state.feeds.join(';'));
+  const { title, description } = getFeedData(state.docs[0]);
+  const value = `Title: ${title} Description: ${description}`;
+  $el.html(value);
 };
 
 const generateNewsList = () => {
   const $el = $('#newsList');
-  $el.html(state.feeds.join(','));
+  const { articles } = getFeedData(state.docs[0]);
+  const value = articles.reduce((acc, item) => `${acc} \n ${item.title}`, '');
+  $el.html(value);
 };
 
 events.on('feedSubmitted', feedToAdd);
-events.on('feedAdded', generateDescriptionList);
-events.on('feedAdded', generateNewsList);
+events.on('feedAdded', downloadFeedsData);
+events.on('feedsDataDownloaded', parseFeedsData);
+events.on('feedsDataParsed', generateDescriptionList);
+events.on('feedsDataParsed', generateNewsList);
