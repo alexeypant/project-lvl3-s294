@@ -7,13 +7,21 @@
   <body>
     <div class="jumbotron">
         <h1 class="display-4"><%= htmlWebpackPlugin.options.title %></h1>
-        <form>
-          <div id="feedUrlForm" class="form-group">
-            <input type="email" class="form-control" id="feedUrlInput" placeholder="Enter RSS-feed URL">
+        <form id="feedUrlForm">
+          <div class="form-group">
+            <input type="url" class="form-control" id="feedUrlInput" placeholder="Enter RSS-feed URL">
             <small id="emailHelp" class="form-text text-muted">Duplicates will be ignored</small>
           </div>
           <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
+    <div id="feedsList">
+        <h2>Feeds List</h2>
+        <p></p>
+      </div>
+      <div id="newsList">
+          <h2>Rss news</h2>
+          <p></p>
+      </div>
 </body>
 </html>
