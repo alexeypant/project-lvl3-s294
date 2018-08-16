@@ -47,7 +47,7 @@ const feedToAdd = (feedUrl) => {
 const downloadFeedsData = () => {
   const urls = state.feeds;
   if (urls.length === 0) return;
-  const proxyURL = 'https://cors-anywhere.herokuapp.com/'
+  const proxyURL = 'https://cors-anywhere.herokuapp.com/';
 
   const downloadPromises = urls.map(url => axios.get(`${proxyURL}${url}`));
   Promise.all(downloadPromises)
