@@ -68,20 +68,6 @@ const parseFeedsData = () => {
   events.emit('feedsDataParsed');
 };
 
-const generateDescriptionList = () => {
-  const $el = $('#feedsDescriptionList');
-  const { title, description } = getFeedData(state.docs[0]);
-  const value = `Title: ${title} Description: ${description}`;
-  $el.html(value);
-};
-
-const generateNewsList = () => {
-  const $el = $('#newsList');
-  const { articles } = getFeedData(state.docs[0]);
-  const value = articles.reduce((acc, item) => `${acc} \n ${item.title}`, '');
-  $el.html(value);
-};
-
 const buildDescriptionHtml = () => {
   const descriptionHtml = document.createElement('div');
   const title = document.createElement('h2');
