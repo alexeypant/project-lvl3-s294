@@ -86,6 +86,19 @@ const buildListItem = (item) => {
   a.innerHTML = item.title;
   a.href = item.link;
   li.appendChild(a);
+
+  const button = document.createElement('button');
+  button.innerHTML = 'Description';
+  button.classList.add('btn', 'btn-primary', 'btn-sm', 'ml-2');
+  button.type = 'button';
+  button.dataset.toggle = 'modal';
+  button.dataset.target = '#descriptionModal';
+  button.addEventListener('click', () => {
+    const $el = $('#modalBody');
+    $el.html(item.description);
+  });
+  li.appendChild(button);
+
   return li;
 };
 
