@@ -3,8 +3,10 @@ import './app.scss';
 import $ from 'jquery';
 import axios from 'axios';
 import validator from 'validator';
+import _ from 'lodash';
 import PubSub from './PubSub';
 import getFeedData from './parsers';
+
 
 const state = {
   feeds: [],
@@ -81,16 +83,6 @@ const buildDescriptionHtml = () => {
     return divItem;
   });
   return descriptionItemsHtml;
-
-
-//   const descriptionHtml = document.createElement('div');
-//   const title = document.createElement('h2');
-//   title.innerHTML = getFeedData(state.docs[0]).title;
-//   const description = document.createElement('p');
-//   description.innerHTML = getFeedData(state.docs[0]).description;
-//   descriptionHtml.appendChild(title);
-//   descriptionHtml.appendChild(description);
-//   return descriptionHtml;
 };
 
 const buildListItem = (item) => {
@@ -100,7 +92,6 @@ const buildListItem = (item) => {
   a.innerHTML = item.title;
   a.href = item.link;
   li.appendChild(a);
-
   const button = document.createElement('button');
   button.innerHTML = 'Description';
   button.classList.add('btn', 'btn-primary', 'btn-sm', 'ml-2');
@@ -117,9 +108,14 @@ const buildListItem = (item) => {
 };
 
 const buildArticlesHtml = () => {
+  const articlesFromAll = state.docs.map((el) => {
+    const titleDescriptionArticles = getFeedData(el);
+    return titleDescriptionArticles.articles;
+  });
+  const articlesArrayFlat = _.flatten(articlesFromAll);
+
   const list = document.createElement('ul');
-  const { articles } = getFeedData(state.docs[0]);
-  articles.forEach((item) => {
+  articlesArrayFlat.forEach((item) => {
     const li = buildListItem(item);
     list.appendChild(li);
   });
@@ -139,7 +135,7 @@ const renderArticlesList = () => {
 };
 
 const updateArticles = () => {
-}
+};
 
 events.on('feedSubmitted', feedToAdd);
 events.on('feedAdded', downloadFeedsData);
