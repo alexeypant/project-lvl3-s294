@@ -82,8 +82,51 @@ const generateNewsList = () => {
   $el.html(value);
 };
 
+const buildDescriptionHtml = () => {
+  const descriptionHtml = document.createElement('div');
+  const title = document.createElement('h2');
+  title.innerHTML = getFeedData(state.docs[0]).title;
+  const description = document.createElement('p');
+  description.innerHTML = getFeedData(state.docs[0]).description;
+  descriptionHtml.appendChild(title);
+  descriptionHtml.appendChild(description);
+  return descriptionHtml;
+};
+
+const buildListItem = (item) => {
+  const li = document.createElement('li');
+  const a = document.createElement('a');
+  li.classList.add('mt-1');
+  a.innerHTML = item.title;
+  a.href = item.link;
+  li.appendChild(a);
+  return li;
+};
+
+const buildArticlesHtml = () => {
+  const list = document.createElement('ul');
+  const { articles } = getFeedData(state.docs[0]);
+  articles.forEach((item) => {
+    const li = buildListItem(item);
+    list.appendChild(li);
+  });
+  return list;
+};
+
+const renderDescription = () => {
+  const $el = $('#description');
+  const value = buildDescriptionHtml();
+  $el.html(value);
+};
+
+const renderArticlesList = () => {
+  const $el = $('#articles');
+  const value = buildArticlesHtml();
+  $el.html(value);
+};
+
 events.on('feedSubmitted', feedToAdd);
 events.on('feedAdded', downloadFeedsData);
 events.on('feedsDataDownloaded', parseFeedsData);
-events.on('feedsDataParsed', generateDescriptionList);
-events.on('feedsDataParsed', generateNewsList);
+events.on('feedsDataParsed', renderDescription);
+events.on('feedsDataParsed', renderArticlesList);
