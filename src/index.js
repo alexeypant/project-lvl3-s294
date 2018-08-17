@@ -11,7 +11,8 @@ import getFeedData from './parsers';
 const state = {
   feeds: [],
   responses: [],
-  docs: '',
+  docs: [],
+  articlesAllFlat: [],
 };
 
 const parser = new DOMParser();
@@ -56,18 +57,34 @@ const downloadFeedsData = () => {
     .then((responses) => {
       state.responses = responses;
       events.emit('feedsDataDownloaded');
+      // setTimeout(downloadFeedsData, 5000);
     })
     .catch((error) => {
       console.log(error);
     })
     .then(() => {
-      setTimeout(events.emit('updateArticles'), 5000);
+      setTimeout(downloadFeedsData, 5000);
     });
 };
 
 const parseFeedsData = () => {
-  state.docs = state.responses.map(el => parser.parseFromString(el.data, 'application/xml'));
-  events.emit('feedsDataParsed');
+  const newDocs = state.responses.map(el => parser.parseFromString(el.data, 'application/xml'));
+  const articlesFromAll = newDocs.map((el) => {
+    const titleDescriptionArticles = getFeedData(el);
+    return titleDescriptionArticles.articles;
+  });
+  const articlesAllFlat = _.flatten(articlesFromAll);
+  if (state.docs.length !== newDocs.length) {
+    state.docs = newDocs;
+    events.emit('newDocsReceived');
+  } else {
+    const excistingArticlesTitles = state.articlesAllFlat.map(art => art.title);
+    const newArticles = articlesAllFlat.filter(art => !excistingArticlesTitles.includes(art.title));
+    if (newArticles.length !== 0) {
+      state.articlesAllFlat = [...newArticles, ...state.articlesAllFlat];
+      events.emit('newArticlesReceived');
+    }
+  }
 };
 
 const buildDescriptionHtml = () => {
@@ -108,14 +125,8 @@ const buildListItem = (item) => {
 };
 
 const buildArticlesHtml = () => {
-  const articlesFromAll = state.docs.map((el) => {
-    const titleDescriptionArticles = getFeedData(el);
-    return titleDescriptionArticles.articles;
-  });
-  const articlesArrayFlat = _.flatten(articlesFromAll);
-
   const list = document.createElement('ul');
-  articlesArrayFlat.forEach((item) => {
+  state.articlesAllFlat.forEach((item) => {
     const li = buildListItem(item);
     list.appendChild(li);
   });
@@ -134,12 +145,9 @@ const renderArticlesList = () => {
   $el.html(value);
 };
 
-const updateArticles = () => {
-};
-
 events.on('feedSubmitted', feedToAdd);
 events.on('feedAdded', downloadFeedsData);
 events.on('feedsDataDownloaded', parseFeedsData);
-events.on('feedsDataParsed', renderDescription);
-events.on('feedsDataParsed', renderArticlesList);
-events.on('updateArticles', updateArticles);
+events.on('newDocsReceived', renderDescription);
+events.on('newDocsReceived', renderArticlesList);
+events.on('newArticlesReceived', renderArticlesList);
