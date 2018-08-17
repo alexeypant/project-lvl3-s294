@@ -5,7 +5,7 @@ import axios from 'axios';
 import validator from 'validator';
 import _ from 'lodash';
 import PubSub from './PubSub';
-import getFeedData from './parsers';
+import getFeedData from './xmlReader';
 
 
 const state = {
