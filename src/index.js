@@ -59,7 +59,7 @@ const downloadFeedsData = () => {
       console.log(error);
     })
     .then(() => {
-      // console.log('done');
+      setTimeout(events.emit('updateArticles'), 5000);
     });
 };
 
@@ -69,14 +69,28 @@ const parseFeedsData = () => {
 };
 
 const buildDescriptionHtml = () => {
-  const descriptionHtml = document.createElement('div');
-  const title = document.createElement('h2');
-  title.innerHTML = getFeedData(state.docs[0]).title;
-  const description = document.createElement('p');
-  description.innerHTML = getFeedData(state.docs[0]).description;
-  descriptionHtml.appendChild(title);
-  descriptionHtml.appendChild(description);
-  return descriptionHtml;
+  const descriptionItemsHtml = state.docs.map((el) => {
+    const titleDescriptionArticleData = getFeedData(el);
+    const divItem = document.createElement('div');
+    const title = document.createElement('h2');
+    title.innerHTML = titleDescriptionArticleData.title;
+    const description = document.createElement('p');
+    description.innerHTML = titleDescriptionArticleData.description;
+    divItem.appendChild(title);
+    divItem.appendChild(description);
+    return divItem;
+  });
+  return descriptionItemsHtml;
+
+
+//   const descriptionHtml = document.createElement('div');
+//   const title = document.createElement('h2');
+//   title.innerHTML = getFeedData(state.docs[0]).title;
+//   const description = document.createElement('p');
+//   description.innerHTML = getFeedData(state.docs[0]).description;
+//   descriptionHtml.appendChild(title);
+//   descriptionHtml.appendChild(description);
+//   return descriptionHtml;
 };
 
 const buildListItem = (item) => {
@@ -124,8 +138,12 @@ const renderArticlesList = () => {
   $el.html(value);
 };
 
+const updateArticles = () => {
+}
+
 events.on('feedSubmitted', feedToAdd);
 events.on('feedAdded', downloadFeedsData);
 events.on('feedsDataDownloaded', parseFeedsData);
 events.on('feedsDataParsed', renderDescription);
 events.on('feedsDataParsed', renderArticlesList);
+events.on('updateArticles', updateArticles);
