@@ -11,8 +11,16 @@ export default () => {
     xmls: [],
     titles: [],
     articles: [],
+    setXmls(newXmls) {
+      this.xmls = newXmls;
+    },
+    setTitles(newTitles) {
+      this.titles = newTitles;
+    },
+    setArticles(newArticles) {
+      this.articles = newArticles;
+    },
   };
-  const updateState = newState => Object.assign(state, newState);
 
   const isInputValid = value => validator.isURL(value.trim());
 
@@ -38,8 +46,8 @@ export default () => {
   });
 
   const { watch } = WatchJS;
-  watch(state, 'urls', () => onFeedAdded(state, updateState));
-  watch(state, 'xmls', () => onXmlsReceived(state, updateState));
-  watch(state, 'titles', () => onTitlesChanged(state, updateState));
-  watch(state, 'articles', () => onArticlesChanged(state, updateState));
+  watch(state, 'urls', () => onFeedAdded(state));
+  watch(state, 'xmls', () => onXmlsReceived(state));
+  watch(state, 'titles', () => onTitlesChanged(state));
+  watch(state, 'articles', () => onArticlesChanged(state));
 };
