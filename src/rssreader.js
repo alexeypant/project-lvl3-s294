@@ -5,7 +5,7 @@ import WatchJS from 'melanke-watchjs';
 import { onFeedAdded, onXmlsReceived } from './controllers';
 import { onTitlesChanged, onArticlesChanged } from './renderers';
 
-const reader = () => {
+export default () => {
   const state = {
     urls: [],
     xmls: [],
@@ -45,4 +45,3 @@ const reader = () => {
   watch(state, 'articles', () => onArticlesChanged(state, updateState));
 };
 
-export default reader;
