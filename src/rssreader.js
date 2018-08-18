@@ -13,6 +13,7 @@ export default () => {
     articles: [],
   };
   const updateState = newState => Object.assign(state, newState);
+  
   const isInputValid = value => validator.isURL(value.trim());
 
   const input = document.getElementById('feedUrlInput');
