@@ -33,12 +33,10 @@ export default () => {
     },
   };
 
-
   const input = document.getElementById('feedUrlInput');
   input.addEventListener('input', () => {
     state.setInput(input.value.trim());
   });
-
 
   const form = document.getElementById('feedUrlForm');
   form.addEventListener('submit', (e) => {
@@ -47,7 +45,7 @@ export default () => {
       state.setUrls([state.input, ...state.urls]);
     }
     state.setInput('');
-    input.value = '';
+    input.value = ''; // do we need to add separate renderer for this to be more close to MVC??
   });
 
   const { watch } = WatchJS;
