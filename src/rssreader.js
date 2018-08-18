@@ -1,16 +1,27 @@
 import 'bootstrap';
 import './app.scss';
-import validator from 'validator';
 import WatchJS from 'melanke-watchjs';
-import { onFeedAdded, onXmlsReceived } from './controllers';
-import { onTitlesChanged, onArticlesChanged } from './renderers';
+import { onInputChanged, onFeedAdded, onXmlsReceived } from './controllers';
+import { onIsInputValidChanged, onTitlesChanged, onArticlesChanged } from './renderers';
+
 
 export default () => {
   const state = {
+    input: '',
+    isInputValid: true,
     urls: [],
     xmls: [],
     titles: [],
     articles: [],
+    setInput(newInput) {
+      this.input = newInput;
+    },
+    setIsInputValid(newState) {
+      this.isInputValid = newState;
+    },
+    setUrls(newUrls) {
+      this.urls = newUrls;
+    },
     setXmls(newXmls) {
       this.xmls = newXmls;
     },
@@ -22,30 +33,26 @@ export default () => {
     },
   };
 
-  const isInputValid = value => validator.isURL(value.trim());
 
   const input = document.getElementById('feedUrlInput');
   input.addEventListener('input', () => {
-    if (isInputValid(input.value)) {
-      input.classList.remove('is-invalid');
-    } else {
-      input.classList.add('is-invalid');
-    }
+    state.setInput(input.value.trim());
   });
+
 
   const form = document.getElementById('feedUrlForm');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const value = input.value.trim();
-    if (isInputValid(value)) {
-      input.value = '';
-      if (!state.urls.includes(value)) {
-        state.urls = [value, ...state.urls];
-      }
+    if (state.isInputValid && !state.urls.includes(state.input)) {
+      state.setUrls([state.input, ...state.urls]);
     }
+    state.setInput('');
+    input.value = '';
   });
 
   const { watch } = WatchJS;
+  watch(state, 'input', () => onInputChanged(state));
+  watch(state, 'isInputValid', () => onIsInputValidChanged(state));
   watch(state, 'urls', () => onFeedAdded(state));
   watch(state, 'xmls', () => onXmlsReceived(state));
   watch(state, 'titles', () => onTitlesChanged(state));

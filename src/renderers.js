@@ -1,5 +1,14 @@
 import $ from 'jquery';
 
+export const onIsInputValidChanged = (state) => {
+  const input = document.getElementById('feedUrlInput');
+  if (state.isInputValid) {
+    input.classList.remove('is-invalid');
+  } else {
+    input.classList.add('is-invalid');
+  }
+};
+
 const buildDescriptionHtml = (state) => {
   const descriptionItemsHtml = state.titles.map((el) => {
     const divItem = document.createElement('div');

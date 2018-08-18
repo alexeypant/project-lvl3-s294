@@ -1,6 +1,13 @@
 import axios from 'axios';
 import _ from 'lodash';
+import validator from 'validator';
 import { getTitleAndDescriptionFromXml, getArticlesFromXml } from './xmlReader';
+
+
+export const onInputChanged = (state) => {
+  const isValid = !state.input || validator.isURL(state.input);
+  state.setIsInputValid(isValid);
+};
 
 export const onFeedAdded = (state) => {
   const proxyURL = 'https://cors-anywhere.herokuapp.com/';
