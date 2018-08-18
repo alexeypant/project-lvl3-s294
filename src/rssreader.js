@@ -2,29 +2,25 @@ import 'bootstrap';
 import './app.scss';
 import validator from 'validator';
 import WatchJS from 'melanke-watchjs';
-import { feedToAdd, downloadFeedsData, parseFeedsData } from './controllers';
-import { renderDescription, renderArticlesList } from './renderers';
-
-const state = {
-  feedSubmitted: '',
-  feeds: [],
-  responses: [],
-  docs: [],
-  articlesAllFlat: [],
-};
-
-const { watch } = WatchJS;
-
-export const updateReaderState = newState => Object.assign(state, newState);
+import { onFeedAdded, onXmlsReceived } from './controllers';
+import { onTitlesChanged, onArticlesChanged } from './renderers';
 
 const reader = () => {
+  const state = {
+    urls: [],
+    xmls: [],
+    titles: [],
+    articles: [],
+  };
+  const updateState = newState => Object.assign(state, newState);
+
   const input = document.getElementById('feedUrlInput');
   const form = document.getElementById('feedUrlForm');
 
+  const isInputValid = value => validator.isURL(value.trim());
+
   input.addEventListener('input', () => {
-    const value = input.value.trim();
-    const isValid = !input.value || validator.isURL(value);
-    if (isValid) {
+    if (isInputValid(input.value)) {
       input.classList.remove('is-invalid');
     } else {
       input.classList.add('is-invalid');
@@ -34,18 +30,19 @@ const reader = () => {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const value = input.value.trim();
-    const isValid = !input.value || validator.isURL(value);
-    if (input.value && isValid) {
+    if (isInputValid(value)) {
       input.value = '';
-      state.feedSubmitted = value;
+      if (!state.urls.includes(value)) {
+        state.urls = [value, ...state.urls];
+      }
     }
   });
 
-  watch(state, 'feedSubmitted', () => feedToAdd(state));
-  watch(state, 'feeds', () => downloadFeedsData(state));
-  watch(state, 'responses', () => parseFeedsData(state));
-  watch(state, 'docs', () => renderDescription(state));
-  watch(state, 'articlesAllFlat', () => renderArticlesList(state));
+  const { watch } = WatchJS;
+  watch(state, 'urls', () => onFeedAdded(state, updateState));
+  watch(state, 'xmls', () => onXmlsReceived(state, updateState));
+  watch(state, 'titles', () => onTitlesChanged(state, updateState));
+  watch(state, 'articles', () => onArticlesChanged(state, updateState));
 };
 
 export default reader;

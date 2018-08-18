@@ -1,6 +1,13 @@
-const getFeedData = (xmlDOM) => {
+export const getTitleAndDescriptionFromXml = (xmlDOM) => {
   const title = xmlDOM.querySelector('channel > title');
   const description = xmlDOM.querySelector('channel > description');
+  return {
+    title: title ? title.textContent : '',
+    description: description ? description.textContent : '',
+  };
+};
+
+export const getArticlesFromXml = (xmlDOM) => {
   const items = xmlDOM.querySelectorAll('item');
   const articles = [].map.call(items, (item) => {
     const articleTitle = item.querySelector('title');
@@ -12,12 +19,5 @@ const getFeedData = (xmlDOM) => {
       description: articleDescription ? articleDescription.textContent : '',
     };
   });
-
-  return {
-    title: title ? title.textContent : '',
-    description: description ? description.textContent : '',
-    articles,
-  };
+  return articles;
 };
-
-export default getFeedData;

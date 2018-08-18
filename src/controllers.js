@@ -1,50 +1,58 @@
 import axios from 'axios';
 import _ from 'lodash';
-import getFeedData from './xmlReader';
-import { updateReaderState } from './rssreader';
+import { getTitleAndDescriptionFromXml, getArticlesFromXml } from './xmlReader';
+
 
 const parser = new DOMParser();
 
-export const feedToAdd = (state) => {
-  if (!state.feeds.includes(state.feedSubmitted)) {
-    const newFeedsList = [state.feedSubmitted, ...state.feeds];
-    updateReaderState({ ...state, feeds: newFeedsList });
-  }
-};
-
-export const downloadFeedsData = (state) => {
-  const urls = state.feeds;
+export const onFeedAdded = (state, updateState) => {
+  const { urls } = state;
   if (urls.length === 0) return;
   const proxyURL = 'https://cors-anywhere.herokuapp.com/';
 
   const downloadPromises = urls.map(url => axios.get(`${proxyURL}${url}`));
   Promise.all(downloadPromises)
-    .then((responses) => {
-      updateReaderState({ ...state, responses });
+    .then((xmls) => {
+      updateState({ ...state, xmls });
     })
     .catch((error) => {
       console.log(error);
     })
     .then(() => {
-      setTimeout(downloadFeedsData(state), 5000);
+      setTimeout(onFeedAdded(state), 5000);
     });
 };
 
-export const parseFeedsData = (state) => {
-  const newDocs = state.responses.map(el => parser.parseFromString(el.data, 'application/xml'));
-  const articlesFromAll = newDocs.map((el) => {
-    const titleDescriptionArticles = getFeedData(el);
-    return titleDescriptionArticles.articles;
-  });
-  const articlesAllFlat = _.flatten(articlesFromAll);
-  if (state.docs.length !== newDocs.length) {
-    updateReaderState({ ...state, docs: newDocs, articlesAllFlat });
-  } else {
-    const excistingArticlesTitles = state.articlesAllFlat.map(art => art.title);
-    const newArticles = articlesAllFlat.filter(art => !excistingArticlesTitles.includes(art.title));
-    if (newArticles.length !== 0) {
-      const updatedArticlesList = [...newArticles, ...state.articlesAllFlat];
-      updateReaderState({ ...state, articlesAllFlat: updatedArticlesList });
-    }
+export const onXmlsReceived = (state, updateState) => {
+  const docs = state.xmls.map(el => parser.parseFromString(el.data, 'application/xml'));
+  const titles = docs.map(doc => getTitleAndDescriptionFromXml(doc));
+  if (state.titles.length !== titles.length) {
+    updateState({ ...state, titles });
   }
+  const articlesNotFlat = docs.map(doc => getArticlesFromXml(doc));
+  const articles = _.flatten(articlesNotFlat);
+  const excistingArticlesTitles = state.articles.map(art => art.title);
+  const newArticles = articles.filter(art => !excistingArticlesTitles.includes(art.title));
+  if (newArticles.length > 0) {
+    const updatedArticlesList = [...newArticles, ...state.articles];
+    updateState({ ...state, articles: updatedArticlesList });
+  }
+
+  // const newDocs = state.xmls.map(el => parser.parseFromString(el.data, 'application/xml'));
+  // const articlesFromAll = newDocs.map((el) => {
+  //   const titleDescriptionArticles = getFeedData(el);
+  //   return titleDescriptionArticles.articles;
+  // });
+  // const articlesAllFlat = _.flatten(articlesFromAll);
+  // if (state.docs.length !== newDocs.length) {
+  //   updateState({ ...state, docs: newDocs, articlesAllFlat });
+  // } else {
+  //   const excistingArticlesTitles = state.articlesAllFlat.map(art => art.title);
+  //   const newArticles = articlesAllFlat.filter
+  // (art => !excistingArticlesTitles.includes(art.title));
+  //   if (newArticles.length !== 0) {
+  //     const updatedArticlesList = [...newArticles, ...state.articlesAllFlat];
+  //     updateState({ ...state, articlesAllFlat: updatedArticlesList });
+  //   }
+  // }
 };

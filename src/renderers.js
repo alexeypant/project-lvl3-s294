@@ -1,19 +1,23 @@
 import $ from 'jquery';
-import getFeedData from './xmlReader';
 
 const buildDescriptionHtml = (state) => {
-  const descriptionItemsHtml = state.docs.map((el) => {
-    const titleDescriptionArticleData = getFeedData(el);
+  const descriptionItemsHtml = state.titles.map((el) => {
     const divItem = document.createElement('div');
     const title = document.createElement('h2');
-    title.innerHTML = titleDescriptionArticleData.title;
+    title.innerHTML = el.title;
     const description = document.createElement('p');
-    description.innerHTML = titleDescriptionArticleData.description;
+    description.innerHTML = el.description;
     divItem.appendChild(title);
     divItem.appendChild(description);
     return divItem;
   });
   return descriptionItemsHtml;
+};
+
+export const onTitlesChanged = (state) => {
+  const $el = $('#description');
+  const value = buildDescriptionHtml(state);
+  $el.html(value);
 };
 
 const buildListItem = (item) => {
@@ -34,26 +38,19 @@ const buildListItem = (item) => {
     $el.html(item.description);
   });
   li.appendChild(button);
-
   return li;
 };
 
 const buildArticlesHtml = (state) => {
   const list = document.createElement('ul');
-  state.articlesAllFlat.forEach((item) => {
+  state.articles.forEach((item) => {
     const li = buildListItem(item);
     list.appendChild(li);
   });
   return list;
 };
 
-export const renderDescription = (state) => {
-  const $el = $('#description');
-  const value = buildDescriptionHtml(state);
-  $el.html(value);
-};
-
-export const renderArticlesList = (state) => {
+export const onArticlesChanged = (state) => {
   const $el = $('#articles');
   const value = buildArticlesHtml(state);
   $el.html(value);
