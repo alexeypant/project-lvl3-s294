@@ -2,14 +2,10 @@ import axios from 'axios';
 import _ from 'lodash';
 import { getTitleAndDescriptionFromXml, getArticlesFromXml } from './xmlReader';
 
-
-const parser = new DOMParser();
-
 export const onFeedAdded = (state, updateState) => {
   const { urls } = state;
   if (urls.length === 0) return;
   const proxyURL = 'https://cors-anywhere.herokuapp.com/';
-
   const downloadPromises = urls.map(url => axios.get(`${proxyURL}${url}`));
   Promise.all(downloadPromises)
     .then((xmls) => {
@@ -24,6 +20,7 @@ export const onFeedAdded = (state, updateState) => {
 };
 
 export const onXmlsReceived = (state, updateState) => {
+  const parser = new DOMParser();
   const docs = state.xmls.map(el => parser.parseFromString(el.data, 'application/xml'));
   const titles = docs.map(doc => getTitleAndDescriptionFromXml(doc));
   if (state.titles.length !== titles.length) {
@@ -37,22 +34,4 @@ export const onXmlsReceived = (state, updateState) => {
     const updatedArticlesList = [...newArticles, ...state.articles];
     updateState({ ...state, articles: updatedArticlesList });
   }
-
-  // const newDocs = state.xmls.map(el => parser.parseFromString(el.data, 'application/xml'));
-  // const articlesFromAll = newDocs.map((el) => {
-  //   const titleDescriptionArticles = getFeedData(el);
-  //   return titleDescriptionArticles.articles;
-  // });
-  // const articlesAllFlat = _.flatten(articlesFromAll);
-  // if (state.docs.length !== newDocs.length) {
-  //   updateState({ ...state, docs: newDocs, articlesAllFlat });
-  // } else {
-  //   const excistingArticlesTitles = state.articlesAllFlat.map(art => art.title);
-  //   const newArticles = articlesAllFlat.filter
-  // (art => !excistingArticlesTitles.includes(art.title));
-  //   if (newArticles.length !== 0) {
-  //     const updatedArticlesList = [...newArticles, ...state.articlesAllFlat];
-  //     updateState({ ...state, articlesAllFlat: updatedArticlesList });
-  //   }
-  // }
 };
