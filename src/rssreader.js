@@ -13,12 +13,9 @@ export default () => {
     articles: [],
   };
   const updateState = newState => Object.assign(state, newState);
-
-  const input = document.getElementById('feedUrlInput');
-  const form = document.getElementById('feedUrlForm');
-
   const isInputValid = value => validator.isURL(value.trim());
 
+  const input = document.getElementById('feedUrlInput');
   input.addEventListener('input', () => {
     if (isInputValid(input.value)) {
       input.classList.remove('is-invalid');
@@ -27,6 +24,7 @@ export default () => {
     }
   });
 
+  const form = document.getElementById('feedUrlForm');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const value = input.value.trim();
@@ -44,4 +42,3 @@ export default () => {
   watch(state, 'titles', () => onTitlesChanged(state, updateState));
   watch(state, 'articles', () => onArticlesChanged(state, updateState));
 };
-
