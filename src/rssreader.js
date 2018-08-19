@@ -1,58 +1,48 @@
 import 'bootstrap';
 import './app.scss';
 import WatchJS from 'melanke-watchjs';
-import { onInputChanged, onFeedAdded, onXmlsReceived } from './controllers';
-import { onIsInputValidChanged, onTitlesChanged, onArticlesChanged } from './renderers';
-
+import { onInputChanged, onFormSubmitted } from './controllers';
+import { renderIsInputValid, renderTitles, renderArticles } from './renderers';
 
 export default () => {
   const state = {
     input: '',
     isInputValid: true,
     urls: [],
-    xmls: [],
     titles: [],
     articles: [],
-    setInput(newInput) {
+    updateInput(newInput) {
       this.input = newInput;
     },
-    setIsInputValid(newState) {
+    updateIsInputValid(newState) {
       this.isInputValid = newState;
     },
-    setUrls(newUrls) {
+    updateUrls(newUrls) {
       this.urls = newUrls;
     },
-    setXmls(newXmls) {
-      this.xmls = newXmls;
-    },
-    setTitles(newTitles) {
+    updateTitles(newTitles) {
       this.titles = newTitles;
     },
-    setArticles(newArticles) {
+    updateArticles(newArticles) {
       this.articles = newArticles;
     },
   };
 
   const input = document.getElementById('feedUrlInput');
   input.addEventListener('input', () => {
-    state.setInput(input.value.trim());
+    state.updateInput(input.value.trim());
+    onInputChanged(state);
   });
 
   const form = document.getElementById('feedUrlForm');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    if (state.isInputValid && !state.urls.includes(state.input)) {
-      state.setUrls([state.input, ...state.urls]);
-    }
-    state.setInput('');
-    input.value = ''; // do we need to add separate renderer for this to be more close to MVC??
+    input.value = '';
+    onFormSubmitted(state);
   });
 
   const { watch } = WatchJS;
-  watch(state, 'input', () => onInputChanged(state));
-  watch(state, 'isInputValid', () => onIsInputValidChanged(state));
-  watch(state, 'urls', () => onFeedAdded(state));
-  watch(state, 'xmls', () => onXmlsReceived(state));
-  watch(state, 'titles', () => onTitlesChanged(state));
-  watch(state, 'articles', () => onArticlesChanged(state));
+  watch(state, 'isInputValid', () => renderIsInputValid(state));
+  watch(state, 'titles', () => renderTitles(state));
+  watch(state, 'articles', () => renderArticles(state));
 };

@@ -1,6 +1,6 @@
 import $ from 'jquery';
 
-export const onIsInputValidChanged = (state) => {
+export const renderIsInputValid = (state) => {
   const input = document.getElementById('feedUrlInput');
   if (state.isInputValid) {
     input.classList.remove('is-invalid');
@@ -23,7 +23,7 @@ const buildDescriptionHtml = (state) => {
   return descriptionItemsHtml;
 };
 
-export const onTitlesChanged = (state) => {
+export const renderTitles = (state) => {
   const $el = $('#description');
   const value = buildDescriptionHtml(state);
   $el.html(value);
@@ -59,7 +59,7 @@ const buildArticlesHtml = (state) => {
   return list;
 };
 
-export const onArticlesChanged = (state) => {
+export const renderArticles = (state) => {
   const $el = $('#articles');
   const value = buildArticlesHtml(state);
   $el.html(value);
