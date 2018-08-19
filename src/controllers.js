@@ -18,8 +18,7 @@ const checkForNewArticles = (state) => {
       const excistingArticlesTitles = state.articles.map(art => art.title);
       const newArticles = articles.filter(art => !excistingArticlesTitles.includes(art.title));
       if (newArticles.length > 0) {
-        const updatedArticlesList = [...newArticles, ...state.articles];
-        state.updateArticles(updatedArticlesList);
+        state.addNewArticles(newArticles);
       }
       setTimeout(checkForNewArticles(state), 5000);
     })
@@ -34,10 +33,10 @@ const onFeedAdded = (state) => {
   (download)
     .then((xml) => {
       const { titles, articles } = parseXml(xml);
-      state.updateTitles([titles, ...state.titles]);
-      state.updateArticles([...articles, ...state.articles]);
+      state.addNewTitles(titles);
+      state.addNewArticles(articles);
       if (!state.isRegularUpdateOn) {
-        state.updateIsRegularUpdateOn(true);
+        state.switchOnRegularUpdate();
         checkForNewArticles(state);
       }
     })
@@ -48,7 +47,7 @@ const onFeedAdded = (state) => {
 
 export const onFormSubmitted = (state) => {
   if (state.isInputValid && !state.urls.includes(state.input)) {
-    state.updateUrls([state.input, ...state.urls]);
+    state.addNewUrl(state.input);
     onFeedAdded(state);
   }
   state.updateInput('');

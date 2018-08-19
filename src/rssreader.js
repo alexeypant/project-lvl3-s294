@@ -4,34 +4,7 @@ import WatchJS from 'melanke-watchjs';
 import { onInputChanged, onFormSubmitted } from './controllers';
 import { renderIsInputValid, renderTitles, renderArticles } from './renderers';
 
-export default () => {
-  const state = {
-    input: '',
-    isInputValid: true,
-    urls: [],
-    titles: [],
-    articles: [],
-    isRegularUpdateOn: false,
-    updateInput(newInput) {
-      this.input = newInput;
-    },
-    updateIsInputValid(newState) {
-      this.isInputValid = newState;
-    },
-    updateUrls(newUrls) {
-      this.urls = newUrls;
-    },
-    updateTitles(newTitles) {
-      this.titles = newTitles;
-    },
-    updateArticles(newArticles) {
-      this.articles = newArticles;
-    },
-    updateIsRegularUpdateOn(newValue) {
-      this.isRegularUpdateOn = newValue;
-    },
-  };
-
+export default (state) => {
   const input = document.getElementById('feedUrlInput');
   input.addEventListener('input', () => {
     state.updateInput(input.value.trim());

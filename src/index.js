@@ -1,5 +1,8 @@
 import 'bootstrap';
 import './app.scss';
 import rssreader from './rssreader';
+import State from './State';
 
-rssreader();
+const state = new State();
+
+rssreader(state);
