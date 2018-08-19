@@ -1,11 +1,33 @@
 import axios from 'axios';
 import _ from 'lodash';
 import validator from 'validator';
-import { getTitleAndDescriptionFromXml, getArticlesFromXml, parseXml } from './xmlReader';
+import parseXml from './xmlReader';
 
 export const onInputChanged = (state) => {
   const isValid = !state.input || validator.isURL(state.input);
   state.updateIsInputValid(isValid);
+};
+
+const onFeedAdded = (state) => {
+  const proxyURL = 'https://cors-anywhere.herokuapp.com/';
+  const download = axios.get(`${proxyURL}${state.urls[0]}`);
+  (download)
+    .then((xml) => {
+      const { titles, articles } = parseXml(xml);
+      state.updateTitles([titles, ...state.titles]);
+      state.updateArticles([...articles, ...state.articles]);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const onFormSubmitted = (state) => {
+  if (state.isInputValid && !state.urls.includes(state.input)) {
+    state.updateUrls([state.input, ...state.urls]);
+    onFeedAdded(state);
+  }
+  state.updateInput('');
 };
 
 // const parser = new DOMParser();
@@ -36,26 +58,3 @@ export const onInputChanged = (state) => {
 //       setTimeout(onFeedAdded(state), 5000);
 //     });
 // };
-
-
-const onFeedAdded = (state) => {
-  const proxyURL = 'https://cors-anywhere.herokuapp.com/';
-  const download = axios.get(`${proxyURL}${state.urls[0]}`);
-  (download)
-    .then((xml) => {
-      const { titles, articles } = parseXml(xml);
-      state.updateTitles([titles, ...state.titles]);
-      state.updateArticles([...articles, ...state.articles]);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-
-export const onFormSubmitted = (state) => {
-  if (state.isInputValid && !state.urls.includes(state.input)) {
-    state.updateUrls([state.input, ...state.urls]);
-    onFeedAdded(state);
-  }
-  state.updateInput('');
-};
