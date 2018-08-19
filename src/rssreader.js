@@ -11,6 +11,7 @@ export default () => {
     urls: [],
     titles: [],
     articles: [],
+    isRegularUpdateOn: false,
     updateInput(newInput) {
       this.input = newInput;
     },
@@ -25,6 +26,9 @@ export default () => {
     },
     updateArticles(newArticles) {
       this.articles = newArticles;
+    },
+    updateIsRegularUpdateOn(newValue) {
+      this.isRegularUpdateOn = newValue;
     },
   };
 
