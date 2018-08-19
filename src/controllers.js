@@ -32,9 +32,8 @@ export const onFormSubmitted = (state) => {
   state.updateInput('');
   if (state.isInputValid && !state.urls.includes(newUrl)) {
     state.addNewUrl(newUrl);
-
     const proxyURL = 'https://cors-anywhere.herokuapp.com/';
-    (axios.get(`${proxyURL}${state.urls[0]}`))
+    (axios.get(`${proxyURL}${newUrl}`))
       .then((xml) => {
         const { titles, articles } = parseXml(xml);
         state.addNewTitles(titles);
