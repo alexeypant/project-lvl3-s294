@@ -27,28 +27,25 @@ const checkForNewArticles = (state) => {
     });
 };
 
-const onFeedAdded = (state) => {
-  const proxyURL = 'https://cors-anywhere.herokuapp.com/';
-  const download = axios.get(`${proxyURL}${state.urls[0]}`);
-  (download)
-    .then((xml) => {
-      const { titles, articles } = parseXml(xml);
-      state.addNewTitles(titles);
-      state.addNewArticles(articles);
-      if (!state.isRegularUpdateOn) {
-        state.switchOnRegularUpdate();
-        checkForNewArticles(state);
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-
 export const onFormSubmitted = (state) => {
-  if (state.isInputValid && !state.urls.includes(state.input)) {
-    state.addNewUrl(state.input);
-    onFeedAdded(state);
-  }
+  const newUrl = state.input;
   state.updateInput('');
+  if (state.isInputValid && !state.urls.includes(newUrl)) {
+    state.addNewUrl(newUrl);
+
+    const proxyURL = 'https://cors-anywhere.herokuapp.com/';
+    (axios.get(`${proxyURL}${state.urls[0]}`))
+      .then((xml) => {
+        const { titles, articles } = parseXml(xml);
+        state.addNewTitles(titles);
+        state.addNewArticles(articles);
+        if (!state.isRegularUpdateOn) {
+          state.switchOnRegularUpdate();
+          checkForNewArticles(state);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 };
