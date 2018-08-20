@@ -5,7 +5,7 @@ import parseXml from './xmlReader';
 
 export const onInputChanged = (state) => {
   const isValid = !state.input || validator.isURL(state.input);
-  state.setInputValid(isValid);
+  state.setIsInputValid(isValid);
 };
 
 const checkForNewArticles = (state) => {
@@ -23,14 +23,8 @@ const checkForNewArticles = (state) => {
     })
     .catch((error) => {
       console.log(error);
-    });
-};
-
-const timeout = (state) => {
-  setTimeout(() => {
-    checkForNewArticles(state);
-    timeout(state);
-  }, 5000);
+    })
+    .finally(() => setTimeout(checkForNewArticles, 5000, state));
 };
 
 export const onFormSubmitted = (state) => {
@@ -46,7 +40,7 @@ export const onFormSubmitted = (state) => {
         state.addNewArticles(articles);
         if (!state.isRegularUpdateOn) {
           state.switchOnRegularUpdate();
-          timeout(state);
+          checkForNewArticles(state);
         }
       })
       .catch((error) => {
