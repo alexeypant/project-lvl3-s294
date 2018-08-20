@@ -19,8 +19,8 @@ export default class {
       this.isInputValid = newState;
     }
 
-    addNewUrl(newUrls) {
-      this.urls.push(newUrls);
+    addNewUrl(newUrl) {
+      this.urls.push(newUrl);
     }
 
     addNewTitle(newTitle) {
