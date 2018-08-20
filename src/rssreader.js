@@ -7,7 +7,7 @@ import { renderIsInputValid, renderTitles, renderArticles } from './renderers';
 export default (state) => {
   const input = document.getElementById('feedUrlInput');
   input.addEventListener('input', () => {
-    state.updateInput(input.value.trim());
+    state.setInput(input.value.trim());
     onInputChanged(state);
   });
 

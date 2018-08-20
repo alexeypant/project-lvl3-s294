@@ -11,20 +11,20 @@ export default class {
 
     isRegularUpdateOn = false;
 
-    updateInput(newInput) {
+    setInput(newInput) {
       this.input = newInput;
     }
 
-    updateIsInputValid(newState) {
+    setIsInputValid(newState) {
       this.isInputValid = newState;
     }
 
     addNewUrl(newUrls) {
-      this.urls = [newUrls, ...this.urls];
+      this.urls.push(newUrls);
     }
 
-    addNewTitles(newTitles) {
-      this.titles = [...newTitles, ...this.titles];
+    addNewTitle(newTitle) {
+      this.titles.push(newTitle);
     }
 
     addNewArticles(newArticles) {

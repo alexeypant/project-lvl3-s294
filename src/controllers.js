@@ -5,7 +5,7 @@ import parseXml from './xmlReader';
 
 export const onInputChanged = (state) => {
   const isValid = !state.input || validator.isURL(state.input);
-  state.updateIsInputValid(isValid);
+  state.setInputValid(isValid);
 };
 
 const checkForNewArticles = (state) => {
@@ -20,27 +20,33 @@ const checkForNewArticles = (state) => {
       if (newArticles.length > 0) {
         state.addNewArticles(newArticles);
       }
-      setTimeout(checkForNewArticles(state), 5000);
     })
     .catch((error) => {
       console.log(error);
     });
 };
 
+const timeout = (state) => {
+  setTimeout(() => {
+    checkForNewArticles(state);
+    timeout(state);
+  }, 5000);
+};
+
 export const onFormSubmitted = (state) => {
   const newUrl = state.input;
-  state.updateInput('');
+  state.setInput('');
   if (state.isInputValid && !state.urls.includes(newUrl)) {
     state.addNewUrl(newUrl);
     const proxyURL = 'https://cors-anywhere.herokuapp.com/';
     (axios.get(`${proxyURL}${newUrl}`))
       .then((xml) => {
-        const { titles, articles } = parseXml(xml);
-        state.addNewTitles(titles);
+        const { title, articles } = parseXml(xml);
+        state.addNewTitle(title);
         state.addNewArticles(articles);
         if (!state.isRegularUpdateOn) {
           state.switchOnRegularUpdate();
-          checkForNewArticles(state);
+          timeout(state);
         }
       })
       .catch((error) => {

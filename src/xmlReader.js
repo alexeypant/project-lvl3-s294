@@ -17,7 +17,7 @@ export default (xml) => {
   });
 
   return {
-    titles: {
+    title: {
       title: title ? title.textContent : '',
       description: description ? description.textContent : '',
     },
